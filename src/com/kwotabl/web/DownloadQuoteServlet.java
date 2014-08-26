@@ -8,12 +8,11 @@ import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
-import com.google.gwt.json.client.JSONArray;
-
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.google.gson.JsonObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -38,18 +37,13 @@ public class DownloadQuoteServlet extends HttpServlet {
     
     PreparedQuery pq = datastore.prepare(q);
 
-    JSONArray jArray = new JSONArray();
-    for (Entity result : pq.asIterable()) {
-      JSONObject jObj = new JSONObject();
+    List<JsonObject> result = new ArrayList<JsonObject>();
+    for (Entity en : pq.asIterable()) {
+      JsonObject currentQuote = new JsonObject();
       
-      try {
-        jObj.put("quote", result.getProperty("quote"));
-        jObj.put("author", result.getProperty("author"));
-
-      } catch (JSONException e) {
-        // TODO(dereksalama): Auto-generated catch block
-        e.printStackTrace();
-      }
+      currentQuote.addProperty("quote", (String) en.getProperty("quote"));
+      currentQuote.addProperty("author", (String) en.getProperty("author"));
+      result.add(currentQuote);
     }
  
   }

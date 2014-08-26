@@ -3,9 +3,8 @@ package com.kwotabl.web;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
-
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -30,27 +29,19 @@ public class UploadQuoteServlet extends HttpServlet {
         sb.append(line);
     } catch (Exception e) { /*report an error*/ }
 
-    try {
-      JSONObject jsonObject = new JSONObject(sb.toString());
-      
-      String user = jsonObject.getString("id_token");
-      String quote = jsonObject.getString("quote");
-      String author = jsonObject.getString("author");
-      
-      Entity e = new Entity("Quote");
-      e.setProperty("user", user);
-      e.setProperty("quote", quote);
-      e.setProperty("author", author);
-      
-      DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-      datastore.put(e);
-      
-    } catch (JSONException e) {
-      // crash and burn
-      throw new IOException("Error parsing JSON request string");
-    }
+    JsonObject jsonObject = new JsonParser().parse(sb.toString()).getAsJsonObject();
     
+    String user = jsonObject.get("id_token").getAsString();
+    String quote = jsonObject.get("quote").getAsString();
+    String author = jsonObject.get("author").getAsString();
     
+    Entity e = new Entity("Quote");
+    e.setProperty("user", user);
+    e.setProperty("quote", quote);
+    e.setProperty("author", author);
+    
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    datastore.put(e);
   }
   
 }
