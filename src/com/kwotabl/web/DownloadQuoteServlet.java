@@ -8,7 +8,7 @@ import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
-import com.google.gson.JsonObject;
+import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -37,14 +37,20 @@ public class DownloadQuoteServlet extends HttpServlet {
     
     PreparedQuery pq = datastore.prepare(q);
 
-    List<JsonObject> result = new ArrayList<JsonObject>();
+    List<QuoteResponseData> result = new ArrayList<>();
     for (Entity en : pq.asIterable()) {
-      JsonObject currentQuote = new JsonObject();
+      String quote = (String) en.getProperty("quote");
+      String author = (String) en.getProperty("author");
       
-      currentQuote.addProperty("quote", (String) en.getProperty("quote"));
-      currentQuote.addProperty("author", (String) en.getProperty("author"));
+      QuoteResponseData currentQuote = new QuoteResponseData(author, quote);
       result.add(currentQuote);
     }
+    
+    resp.setContentType("application/json");
+    
+    Gson gson = new Gson();
+    resp.getWriter().print(gson.toJson(result));
+    resp.getWriter().flush();
  
   }
 
