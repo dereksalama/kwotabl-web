@@ -50,6 +50,8 @@ public class DownloadQuoteServlet extends HttpServlet {
     
     Gson gson = new Gson();
     resp.getWriter().print(gson.toJson(result));
+    
+    resp.setStatus(HttpServletResponse.SC_ACCEPTED);
     resp.getWriter().flush();
  
   }

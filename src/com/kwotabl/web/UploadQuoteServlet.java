@@ -42,6 +42,8 @@ public class UploadQuoteServlet extends HttpServlet {
     
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.put(e);
+    
+    resp.setStatus(HttpServletResponse.SC_ACCEPTED);
   }
   
 }
