@@ -1,0 +1,7 @@
+{
+  "clientId" : "790703926050-1dt61hkpb131q1i6tdv1lftsihe616t3.apps.googleusercontent.com",
+  "serviceAccountEmail" : "790703926050-dhl4e0leb6m4g7hrphhlk0vhefkkhefc@developer.gserviceaccount.com",
+  "serviceAccountPrivateKeyFile" : "Kwotabl-bb9fb3293163.p12",
+  "widgetUrl" : "https://localhost/oauth2callback",
+  "cookieName" : "gtoken"
+}

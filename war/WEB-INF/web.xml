@@ -22,5 +22,26 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
   <servlet-name>DownloadQuoteServlet</servlet-name>
   <url-pattern>/download</url-pattern>  
 </servlet-mapping>
+
+
+<servlet>
+  <servlet-name>LoginSuccessServlet</servlet-name>
+  <servlet-class>com.kwotabl.web.LoginSuccessServlet</servlet-class>
+</servlet>
+<servlet-mapping>
+  <servlet-name>LoginSuccessServlet</servlet-name>
+  <url-pattern>/loginsuccess</url-pattern>  
+</servlet-mapping>
+
+<servlet>
+  <servlet-name>GitkitWidgetServlet</servlet-name>
+  <servlet-class>com.kwotabl.web.GitkitWidgetServlet</servlet-class>
+</servlet>
+<servlet-mapping>
+  <servlet-name>GitkitWidgetServlet</servlet-name>
+  <url-pattern>/gitkit</url-pattern>  
+</servlet-mapping>
+
+
   
 </web-app>

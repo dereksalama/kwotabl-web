@@ -1,0 +1,20 @@
+<script type="text/javascript" src="//www.gstatic.com/authtoolkit/js/gitkit.js"></script>
+<link type="text/css" rel="stylesheet" href="//www.gstatic.com/authtoolkit/css/gitkit.css" />
+<script type="text/javascript">
+function load() {
+  var config = {
+      apiKey: 'AIzaSyC61f3GRahZm3A3fhAaFfP5nCMpTX5Bm1I',
+      signInSuccessUrl: '/loginsuccess',
+      idps: ["google"],
+      idpButtons: 0,
+      oobActionUrl: '/',
+      siteName: 'Kwotabl'
+  };
+  // The HTTP POST body should be escaped by the server to prevent XSS
+  window.google.identitytoolkit.start(
+      '#gitkitWidgetDiv', // accepts any CSS selector
+      config,
+      'JAVASCRIPT_ESCAPED_POST_BODY');
+}
+</script>
+<script type="text/javascript" src="//apis.google.com/js/client.js?onload=load"></script>
