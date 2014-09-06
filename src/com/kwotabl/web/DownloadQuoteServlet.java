@@ -11,6 +11,7 @@ import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.gson.Gson;
 
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +27,18 @@ public class DownloadQuoteServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest req, HttpServletResponse resp)
       throws IOException {
+    
+    String checksumInput = req.getHeader("X-CHECKSUM");
+    try {
+      String reqUrl = ChecksumUtil.getFullURL(req);
+      String checksum = ChecksumUtil.makeCheck(reqUrl.getBytes());
+      if (!checksum.equals(checksumInput)) {
+        resp.sendError(HttpServletResponse.SC_FORBIDDEN);
+      }
+    } catch (NoSuchAlgorithmException e) {
+      e.printStackTrace();
+      resp.sendError(HttpServletResponse.SC_FORBIDDEN);
+    }
     
     String user = req.getParameter("id_token");
     

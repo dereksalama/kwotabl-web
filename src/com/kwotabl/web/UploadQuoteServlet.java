@@ -8,6 +8,7 @@ import com.google.gson.JsonParser;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -20,6 +21,18 @@ public class UploadQuoteServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest req, HttpServletResponse resp)
       throws IOException {
+    
+    String checksumInput = req.getHeader("X-CHECKSUM");
+    try {
+      String reqUrl = ChecksumUtil.getFullURL(req);
+      String checksum = ChecksumUtil.makeCheck(reqUrl.getBytes());
+      if (!checksum.equals(checksumInput)) {
+        resp.sendError(HttpServletResponse.SC_FORBIDDEN);
+      }
+    } catch (NoSuchAlgorithmException e) {
+      e.printStackTrace();
+      resp.sendError(HttpServletResponse.SC_FORBIDDEN);
+    }
     
     StringBuffer sb = new StringBuffer();
     String line = null;
