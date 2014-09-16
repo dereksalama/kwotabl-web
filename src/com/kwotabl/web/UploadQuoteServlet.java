@@ -41,16 +41,33 @@ public class UploadQuoteServlet extends HttpServlet {
       BufferedReader reader = req.getReader();
       while ((line = reader.readLine()) != null)
         sb.append(line);
-    } catch (Exception e) { /*report an error*/ }
+    } catch (Exception e) { 
+      resp.sendError(HttpServletResponse.SC_BAD_REQUEST,
+        e.getMessage());
+      return;
+    }
 
-    JsonObject jsonObject = new JsonParser().parse(sb.toString()).getAsJsonObject();
-    
-    String user = jsonObject.get("id_token").getAsString();
+    JsonObject jsonObject;
+    GitkitUser gitkitUser;
+    try {
+      jsonObject = new JsonParser().parse(sb.toString()).getAsJsonObject();
+      String idToken = jsonObject.get("id_token").getAsString();
+      GitkitClient gitkitClient = 
+          GitkitClient.createFromJson("gitkit-server-config.json");
+      gitkitUser = gitkitClient.validateToken(idToken);
+    } catch (JSONException e) {
+      resp.sendError(HttpServletResponse.INTERNAL_SERVER_ERROR);
+      return;
+    } catch (GitkitClientException e) {
+      resp.sendError(HttpServletResponse.SC_FORBIDDEN, e.getMessage());
+      return;
+    }
+
     String quote = jsonObject.get("quote").getAsString();
     String author = jsonObject.get("author").getAsString();
     
     Entity e = new Entity("Quote");
-    e.setProperty("user", user);
+    e.setProperty("user", gitkitUser.getLocalId());
     e.setProperty("quote", quote);
     e.setProperty("author", author);
     

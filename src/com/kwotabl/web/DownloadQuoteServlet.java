@@ -50,14 +50,28 @@ public class DownloadQuoteServlet extends HttpServlet {
       BufferedReader reader = req.getReader();
       while ((line = reader.readLine()) != null)
         sb.append(line);
-    } catch (Exception e) { /*report an error*/ }
+    } catch (Exception e) {
+      resp.sendError(HttpServletResponse.SC_BAD_REQUEST,
+        e.getMessage());
+    }
 
-    JsonObject jsonObject = new JsonParser().parse(sb.toString()).getAsJsonObject();
-    String user = jsonObject.get("local_id").getAsString();
+    try {
+      JsonObject jsonObject = new JsonParser().parse(sb.toString()).getAsJsonObject();
+      String idToken = jsonObject.get("id_token").getAsString();
+      GitkitClient gitkitClient = 
+          GitkitClient.createFromJson("gitkit-server-config.json");
+      GitkitUser gitkitUser = gitkitClient.validateToken(idToken);
+    } catch (JSONException e) {
+      resp.sendError(HttpServletResponse.INTERNAL_SERVER_ERROR);
+    } catch (GitkitClientException e) {
+      resp.sendError(HttpServletResponse.SC_FORBIDDEN, e.getMessage());
+    }
+
     
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
-    Filter userFilter = new FilterPredicate("user", FilterOperator.EQUAL, user);
+    Filter userFilter = new FilterPredicate(gitkitUser.getLocalId(),
+        FilterOperator.EQUAL, user);
     
     Query q = new Query("Quote").setFilter(userFilter);
     
@@ -79,7 +93,5 @@ public class DownloadQuoteServlet extends HttpServlet {
     
     resp.setStatus(HttpServletResponse.SC_ACCEPTED);
     resp.getWriter().flush();
- 
   }
-
 }
