@@ -9,9 +9,11 @@ import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,9 +27,10 @@ import javax.servlet.http.HttpServletResponse;
 public class DownloadQuoteServlet extends HttpServlet {
   
   @Override
-  public void doGet(HttpServletRequest req, HttpServletResponse resp)
+  public void doPost(HttpServletRequest req, HttpServletResponse resp)
       throws IOException {
     
+    /*
     String checksumInput = req.getHeader("X-CHECKSUM");
     try {
       String reqUrl = ChecksumUtil.getFullURL(req);
@@ -39,8 +42,18 @@ public class DownloadQuoteServlet extends HttpServlet {
       e.printStackTrace();
       resp.sendError(HttpServletResponse.SC_FORBIDDEN);
     }
+    */
     
-    String user = req.getParameter("id_token");
+    StringBuffer sb = new StringBuffer();
+    String line = null;
+    try {
+      BufferedReader reader = req.getReader();
+      while ((line = reader.readLine()) != null)
+        sb.append(line);
+    } catch (Exception e) { /*report an error*/ }
+
+    JsonObject jsonObject = new JsonParser().parse(sb.toString()).getAsJsonObject();
+    String user = jsonObject.get("local_id").getAsString();
     
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
